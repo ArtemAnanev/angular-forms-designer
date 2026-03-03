@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { IFieldTypesDefinitions } from '../../../models/ifield-types-definitions';
+import { IFieldTypeDefinition } from '../../../models/field';
 import { MatIconModule } from '@angular/material/icon';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -24,5 +24,5 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
   styles: ``,
 })
 export class FieldButton {
-  field = input.required<IFieldTypesDefinitions>();
+  field = input.required<IFieldTypeDefinition>();
 }

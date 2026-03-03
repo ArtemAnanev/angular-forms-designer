@@ -1,37 +1,44 @@
 import { Injectable } from '@angular/core';
-import { IFieldTypesDefinitions } from '../models/ifield-types-definitions';
+import { IFieldTypeDefinition } from '../models/field';
+import {TextField} from "../components/field-types/text-field/text-field";
+import {CheckboxField} from "../components/field-types/checkbox-field/checkbox-field";
 
 const TEXT_FIELD_DEFINITION = {
   type: 'text',
   label: 'Text Field',
-  icon: 'text_fields'
+  icon: 'text_fields',
+  defaultConfig: {
+    label: 'Text Field',
+    required: false,
+  },
+  component: TextField,
 }
 
 const CHECKBOX_FIELD_DEFINITION = {
   type: 'checkbox',
   label: 'Checkbox',
   icon: 'check_box',
+  defaultConfig: {
+    label: 'Checkbox',
+    required: false,
+  },
+  component: CheckboxField,
 };
-
-// interface FieldTypeDefinition {
-//   type: string;
-//   label: string;
-//   icon: string;
-// }
 
 @Injectable({
   providedIn: 'root'
 })
 export class FieldTypesService {
-
-  fieldTypes = new Map<string, IFieldTypesDefinitions>([
+  fieldTypes = new Map<string, IFieldTypeDefinition>([
     ['text', TEXT_FIELD_DEFINITION],
     ['checkbox', CHECKBOX_FIELD_DEFINITION]
   ]);
 
-  getAllFieldTypes(): IFieldTypesDefinitions[] {
-    return Array.from(this.fieldTypes.values());
+  getFieldType(type: string): IFieldTypeDefinition | undefined {
+    return this.fieldTypes.get(type);
   }
 
-  constructor() { }
+  getAllFieldTypes(): IFieldTypeDefinition[] {
+    return Array.from(this.fieldTypes.values());
+  }
 }
