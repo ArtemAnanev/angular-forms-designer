@@ -33,7 +33,6 @@ export class FormService {
             }
             return row;
         })
-
         this._rows.set(newRows);
     }
 
@@ -43,8 +42,24 @@ export class FormService {
             ...row,
             fields: row.fields.filter(f => f.id !== fieldId)
         }))
-
         this._rows.set(newRows);
+    }
 
+    addRow() {
+        const newRow: IFormRow = {
+            id: crypto.randomUUID(),
+            fields: [],
+        }
+        const rows = this._rows();
+        this._rows.set([...rows, newRow]);
+    }
+
+    deleteRow(rowId: string) {
+        if (this._rows().length === 1) {
+            return;
+        }
+        const rows = this._rows();
+        const newRows = rows.filter(row => row.id !== rowId);
+        this._rows.set(newRows);
     }
 }
