@@ -11,6 +11,7 @@ const TEXT_FIELD_DEFINITION = {
     label: 'Text Field',
     required: false,
   },
+  settingsConfig: [],
   component: TextField,
 }
 
@@ -22,6 +23,7 @@ const CHECKBOX_FIELD_DEFINITION = {
     label: 'Checkbox',
     required: false,
   },
+  settingsConfig: [],
   component: CheckboxField,
 };
 

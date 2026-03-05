@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="p-4">
             @for (row of formService.rows(); track row.id) {
                 <div cdkDropList
+                     [cdkDropListData]="row.id"
                      (cdkDropListDropped)="onDropInRow($event, row.id)"
                      [cdkDropListOrientation]="'mixed'"
                      class="p-5 pt-2 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200"
@@ -25,7 +26,11 @@ import { MatIconModule } from '@angular/material/icon';
                     </div>
                     <div class="flex gap-4 flex-wrap">
                         @for (field of row.fields; track field.id) {
-                            <app-form-field class="flex-1" [field]="field" />
+                            <app-form-field cdkDrag [cdkDragData]="field" class="flex-1" [field]="field" />
+                        } @empty {
+                            <div class="w-full p-4 border border-dashed border-primary-container rounded">
+                                Drag and drop elements here
+                            </div>
                         }
                     </div>
                 </div>
@@ -51,5 +56,9 @@ export class FormEditor {
             this.formService.addField(newField, rowId, event.currentIndex)
             return;
         }
+        const dragData = event.item.data as IFormField;
+        const previousRowId = event.previousContainer.data as string;
+
+        this.formService.moveField(dragData.id, previousRowId, rowId, event.currentIndex)
     }
 }

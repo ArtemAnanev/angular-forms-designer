@@ -1,11 +1,24 @@
-import {Type} from "@angular/core";
+import { Type } from '@angular/core';
 
 export interface IFieldTypeDefinition {
   type: string;
   label: string;
   icon: string;
   defaultConfig: any;
+  settingsConfig: IFieldSettingsDefinition[];
   component: Type<unknown>;
+}
+
+export interface IFieldSettingsDefinition {
+  type: 'text' | 'checkbox' | 'select';
+  key: string;
+  label: string;
+  options: IOptionItem[];
+}
+
+export interface IOptionItem {
+  label: string;
+  value: string;
 }
 
 export interface IFormField {
