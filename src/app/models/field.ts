@@ -10,7 +10,7 @@ export interface IFieldTypeDefinition {
 }
 
 export interface IFieldSettingsDefinition {
-  type: 'text' | 'checkbox' | 'select';
+  type: 'text' | 'checkbox' | 'select' | 'dynamic-options';
   key: string;
   label: string;
   options: IOptionItem[];
@@ -27,4 +27,6 @@ export interface IFormField {
   label: string;
   required: boolean;
   inputType?: string;
+  placeholder?: string;
+  options?: IOptionItem[];
 }

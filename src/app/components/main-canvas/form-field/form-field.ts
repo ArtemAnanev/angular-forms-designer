@@ -25,7 +25,6 @@ import { FieldPreview } from '../field-preview/field-preview';
     </div>
   `,
   standalone: true,
-  styles: ``,
 })
 export class FormField {
   field = input.required<IFormField>();
