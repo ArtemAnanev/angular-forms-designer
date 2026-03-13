@@ -1,6 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { IFormRow } from '../models/form';
 import { IFormField } from '../models/field';
+import { FieldTypesService } from './field-types.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,9 @@ export class FormService {
   private _rows = signal<IFormRow[]>([]);
   public readonly rows = this._rows.asReadonly();
   private _selectedFieldId = signal<string | null>(null);
+
+  private fieldTypesService = inject(FieldTypesService);
+
   public readonly selectedField = computed(() =>
     this._rows()
       .flatMap(row => row.fields)
@@ -102,8 +106,111 @@ export class FormService {
     const rows = this._rows();
     const newRows = rows.map(row => ({
       ...row,
-      fields: row.fields.map((f) => f.id === fieldId ? {...f, ...data} : f),
+      fields: row.fields.map(f => (f.id === fieldId ? { ...f, ...data } : f)),
     }));
     this._rows.set(newRows);
+  }
+
+  moveRowUp(rowId: string) {
+    const rows = this._rows();
+    const index = rows.findIndex(r => r.id === rowId);
+    if (index > 0) {
+      const newRows = [...rows];
+      const temp = newRows[index - 1];
+      newRows[index - 1] = newRows[index];
+      newRows[index] = temp;
+      this._rows.set(newRows);
+    }
+  }
+
+  moveRowDown(rowId: string) {
+    const rows = this._rows();
+    const index = rows.findIndex(r => r.id === rowId);
+    if (index < rows.length - 1) {
+      const newRows = [...rows];
+      const temp = newRows[index + 1];
+      newRows[index + 1] = newRows[index];
+      newRows[index] = temp;
+      this._rows.set(newRows);
+    }
+  }
+
+  //export related functionality
+  exportForm() {
+    const formCode = this.generateFormCode();
+    const blob = new Blob([formCode], {type: 'text/plain'})
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'form.ts'
+    link.click()
+    window.URL.revokeObjectURL(url)
+    console.log(formCode);
+  }
+
+  generateFormCode(): string {
+    let code = this.generateImports();
+    code += this.generateComponentDecorator()
+    code += ` template: \`\n`;
+    code += `   <form class="flex flex-col gap-4">\n`;
+
+    for (const row of this._rows()) {
+      if (row.fields.length > 0) {
+        code += `  <div class="flex gap-4 flex-wrap">\n`;
+        for (const field of row.fields) {
+          code += `  <div class="flex-1">\n`;
+          code += this.generateFieldCode(field)
+          code += `  </div>\n`;
+        }
+        code += `  </div>\n`;
+      }
+    }
+    code += `  </form>\n`;
+    code += `  \`\n`;
+    code += `})\n`;
+    code += `export class GeneratedFormComponent {\n`;
+    code += `}\n`;
+
+    return code;
+  }
+
+  generateFieldCode(field: IFormField): string {
+    const fieldDef = this.fieldTypesService.getFieldType(field.type);
+    return fieldDef?.generateCode(field) || ''
+  }
+
+  generateImports(): string {
+    return (
+      `import { Component } from '@angular/core';\n` +
+      `import { CommonModule } from '@angular/common';\n` +
+      `import { FormsModule } from '@angular/forms';\n` +
+      `import { MatFormFieldModule} from '@angular/material/form-field';\n` +
+      `import { MatFormInputModule} from '@angular/material/input';\n` +
+      `import { MatSelectModule} from '@angular/material/select';\n` +
+      `import { MatCheckboxModule} from '@angular/material/checkbox';\n` +
+      `import { MatRadioModule} from '@angular/material/radio';\n` +
+      `import { MatDatepickerModule} from '@angular/material/datepicker';\n` +
+      `import { MatNativeDateModule} from '@angular/material/core';\n` +
+      `import { MatButtonModule} from '@angular/material/button';\n\n`
+    );
+  }
+
+  generateComponentDecorator(): string {
+    return (
+      `@Component({\n` +
+      `standalone: true, \n` +
+      `imports: [\n` +
+      ` CommonModule, \n` +
+      ` FormsModule, \n` +
+      ` MatFormFieldModule, \n` +
+      ` MatFormInputModule, \n` +
+      ` MatSelectModule, \n` +
+      ` MatCheckboxModule, \n` +
+      ` MatRadioModule, \n` +
+      ` MatDatepickerModule, \n` +
+      ` MatNativeDateModule, \n` +
+      ` MatButtonModule, \n` +
+      ` ],\n`
+    );
   }
 }

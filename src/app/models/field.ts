@@ -7,6 +7,7 @@ export interface IFieldTypeDefinition {
   defaultConfig: any;
   settingsConfig: IFieldSettingsDefinition[];
   component: Type<unknown>;
+  generateCode: (field: IFormField) => string;
 }
 
 export interface IFieldSettingsDefinition {
