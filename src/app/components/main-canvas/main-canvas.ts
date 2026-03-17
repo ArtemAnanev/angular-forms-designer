@@ -19,7 +19,11 @@ import { FormService } from '../../services/form.service';
         </mat-button-toggle-group>
         @if (activeTab() === 'editor') {
           <div class="flex-1"></div>
-            <button mat-flat-button (click)="formService.addRow()">
+            <button 
+              mat-flat-button
+              class="compact-button"
+              (click)="formService.addRow()"
+            >
               Add Row
               <mat-icon>add_circle</mat-icon>
             </button>
@@ -33,7 +37,18 @@ import { FormService } from '../../services/form.service';
     </div>
   `,
   standalone: true,
-  styles: ``,
+  styles: `
+    @use "@angular/material" as mat;
+
+    mat-button-toggle-group {
+      @include mat.button-toggle-overrides((
+              shape: 5px,
+              height: 36px,
+                selected-state-background-color: var(--mat-sys-primary),
+                selected-state-text-color: var(--mat-sys-on-primary),
+      ))
+    }
+  `,
 })
 export class MainCanvas {
     activeTab = signal<'preview' | 'editor'>('editor');

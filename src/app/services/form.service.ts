@@ -1,7 +1,8 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { ApplicationRef, computed, inject, Injectable, signal } from '@angular/core';
 import { IFormRow } from '../models/form';
 import { IFormField } from '../models/field';
 import { FieldTypesService } from './field-types.service';
+import { startViewTransition } from '../utils/view-transition';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class FormService {
   private _selectedFieldId = signal<string | null>(null);
 
   private fieldTypesService = inject(FieldTypesService);
+  private appRef = inject(ApplicationRef);
 
   public readonly selectedField = computed(() =>
     this._rows()
@@ -37,7 +39,10 @@ export class FormService {
       }
       return row;
     });
-    this._rows.set(newRows);
+
+    startViewTransition(() => {
+      this._rows.set(newRows);
+    });
   }
 
   deleteField(fieldId: string) {
@@ -46,7 +51,11 @@ export class FormService {
       ...row,
       fields: row.fields.filter(f => f.id !== fieldId),
     }));
-    this._rows.set(newRows);
+
+    startViewTransition(() => {
+      this._rows.set(newRows);
+      this.appRef.tick();
+    });
   }
 
   addRow() {
@@ -55,7 +64,9 @@ export class FormService {
       fields: [],
     };
     const rows = this._rows();
-    this._rows.set([...rows, newRow]);
+    startViewTransition(() => {
+      this._rows.set([...rows, newRow]);
+    });
   }
 
   deleteRow(rowId: string) {
@@ -64,7 +75,10 @@ export class FormService {
     }
     const rows = this._rows();
     const newRows = rows.filter(row => row.id !== rowId);
-    this._rows.set(newRows);
+    startViewTransition(() => {
+      this._rows.set(newRows);
+      this.appRef.tick();
+    });
   }
 
   moveField(fieldId: string, sourceRowId: string, targetRowId: string, targetIndex: number = -1) {
@@ -86,8 +100,7 @@ export class FormService {
     if (!fieldToMove) return;
 
     const newRows = [...rows];
-    const fieldsWithRemovedField = newRows[sourceRowIndex].fields.filter(f => f.id !== fieldId);
-    newRows[sourceRowIndex].fields = fieldsWithRemovedField;
+    newRows[sourceRowIndex].fields = newRows[sourceRowIndex].fields.filter(f => f.id !== fieldId);
 
     const targetRowIndex = newRows.findIndex(r => r.id === targetRowId);
     if (targetRowIndex >= 0) {
@@ -95,7 +108,11 @@ export class FormService {
       targetFields.splice(targetIndex, 0, fieldToMove);
       newRows[targetRowIndex].fields = targetFields;
     }
-    this._rows.set(newRows);
+
+    startViewTransition(() => {
+      this._rows.set(newRows);
+      this.appRef.tick();
+    })
   }
 
   setSelectedFieldId(fieldId: string) {
@@ -119,7 +136,9 @@ export class FormService {
       const temp = newRows[index - 1];
       newRows[index - 1] = newRows[index];
       newRows[index] = temp;
-      this._rows.set(newRows);
+      startViewTransition(() => {
+        this._rows.set(newRows);
+      })
     }
   }
 
@@ -131,26 +150,28 @@ export class FormService {
       const temp = newRows[index + 1];
       newRows[index + 1] = newRows[index];
       newRows[index] = temp;
-      this._rows.set(newRows);
+      startViewTransition(() => {
+        this._rows.set(newRows);
+      })
     }
   }
 
   //export related functionality
   exportForm() {
     const formCode = this.generateFormCode();
-    const blob = new Blob([formCode], {type: 'text/plain'})
+    const blob = new Blob([formCode], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'form.ts'
-    link.click()
-    window.URL.revokeObjectURL(url)
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'form.ts';
+    link.click();
+    window.URL.revokeObjectURL(url);
     console.log(formCode);
   }
 
   generateFormCode(): string {
     let code = this.generateImports();
-    code += this.generateComponentDecorator()
+    code += this.generateComponentDecorator();
     code += ` template: \`\n`;
     code += `   <form class="flex flex-col gap-4">\n`;
 
@@ -159,7 +180,7 @@ export class FormService {
         code += `  <div class="flex gap-4 flex-wrap">\n`;
         for (const field of row.fields) {
           code += `  <div class="flex-1">\n`;
-          code += this.generateFieldCode(field)
+          code += this.generateFieldCode(field);
           code += `  </div>\n`;
         }
         code += `  </div>\n`;
@@ -176,7 +197,7 @@ export class FormService {
 
   generateFieldCode(field: IFormField): string {
     const fieldDef = this.fieldTypesService.getFieldType(field.type);
-    return fieldDef?.generateCode(field) || ''
+    return fieldDef?.generateCode(field) || '';
   }
 
   generateImports(): string {

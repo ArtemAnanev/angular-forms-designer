@@ -11,8 +11,8 @@ import { FieldPreview } from '../field-preview/field-preview';
   imports: [TitleCasePipe, MatButtonModule, MatIconModule, FieldPreview],
   template: `
     <div
-      class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 hover:border-black cursor-pointer"
-      [class]="formService.selectedField()?.id === field().id ? '!border-black' : ''"
+      class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 hover:border-primary cursor-pointer"
+      [class]="formService.selectedField()?.id === field().id ? '!border-primary !bg-background' : ''"
       (click)="formService.setSelectedFieldId(field().id)"
     >
       <div class="flex items-center justify-between mb-1">

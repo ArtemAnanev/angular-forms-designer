@@ -12,23 +12,32 @@ import { MatIconModule } from '@angular/material/icon';
     template: `
         <div class="p-4">
             @for (row of formService.rows(); track row.id) {
-                <div cdkDropList
-                     [cdkDropListData]="row.id"
-                     (cdkDropListDropped)="onDropInRow($event, row.id)"
-                     [cdkDropListOrientation]="'mixed'"
-                     class="relative p-5 pt-2 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200"
+                <div 
+                  cdkDropList
+                  [cdkDropListData]="row.id"
+                  (cdkDropListDropped)="onDropInRow($event, row.id)"
+                  [cdkDropListOrientation]="'mixed'"
+                  [style.view-transition-name]="'row-' + row.id"
+                  class="relative p-5 pt-2 ps-10 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200"
                 >
                     <div class="flex justify-between items-center">
-                        <span>Row</span>
+                        <span class="text-primary">Row</span>
                         <button mat-icon-button (click)="formService.deleteRow(row.id)">
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
                     <div class="flex gap-4 flex-wrap">
                         @for (field of row.fields; track field.id) {
-                            <app-form-field cdkDrag [cdkDragData]="field" class="flex-1" [field]="field" />
+                            <app-form-field
+                              cdkDrag 
+                              [cdkDragData]="field" 
+                              class="flex-1" 
+                              [field]="field"
+                              [style.view-transition-name]="'field-' + field.id"
+                              [style.view-transition-class]="'field-transition'"
+                            />
                         } @empty {
-                            <div class="w-full p-4 border border-dashed border-primary-container rounded">
+                            <div class="w-full bg-background p-4 border border-dashed border-primary-container rounded text-center">
                                 Drag and drop elements here
                             </div>
                         }
