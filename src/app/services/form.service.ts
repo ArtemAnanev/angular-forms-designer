@@ -42,6 +42,7 @@ export class FormService {
 
     startViewTransition(() => {
       this._rows.set(newRows);
+      this.appRef.tick()
     });
   }
 
@@ -166,7 +167,6 @@ export class FormService {
     link.download = 'form.ts';
     link.click();
     window.URL.revokeObjectURL(url);
-    console.log(formCode);
   }
 
   generateFormCode(): string {
@@ -206,7 +206,7 @@ export class FormService {
       `import { CommonModule } from '@angular/common';\n` +
       `import { FormsModule } from '@angular/forms';\n` +
       `import { MatFormFieldModule} from '@angular/material/form-field';\n` +
-      `import { MatFormInputModule} from '@angular/material/input';\n` +
+      `import { MatInputModule} from '@angular/material/input';\n` +
       `import { MatSelectModule} from '@angular/material/select';\n` +
       `import { MatCheckboxModule} from '@angular/material/checkbox';\n` +
       `import { MatRadioModule} from '@angular/material/radio';\n` +
@@ -224,7 +224,7 @@ export class FormService {
       ` CommonModule, \n` +
       ` FormsModule, \n` +
       ` MatFormFieldModule, \n` +
-      ` MatFormInputModule, \n` +
+      ` MatInputModule, \n` +
       ` MatSelectModule, \n` +
       ` MatCheckboxModule, \n` +
       ` MatRadioModule, \n` +

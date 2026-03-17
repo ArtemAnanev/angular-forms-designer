@@ -31,13 +31,17 @@ body {
 
 mat-form-field {
   @include mat.theme(
-                          (
+                  (
                           density: -3,
-                          )
+                  )
   )
 }
 
 ::view-transition-old(.field-transition),
 ::view-transition-new(.field-transition) {
   height: 100%;
+}
+
+.mdc-notched-outline__notch {
+  border-right: none;
 }

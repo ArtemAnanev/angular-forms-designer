@@ -62,7 +62,6 @@ export class FormEditor {
     formService = inject(FormService);
 
     onDropInRow(event: CdkDragDrop<string>, rowId: string) {
-        console.log('FormEditor onDropInRow', event);
         if (event.previousContainer.data === 'field-selector') {
             const fieldType = event.item.data as IFieldTypeDefinition
             const newField: IFormField = {

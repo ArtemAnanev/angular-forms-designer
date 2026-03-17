@@ -14,7 +14,7 @@ export interface IFieldSettingsDefinition {
   type: 'text' | 'checkbox' | 'select' | 'dynamic-options';
   key: string;
   label: string;
-  options: IOptionItem[];
+  options?: IOptionItem[];
 }
 
 export interface IOptionItem {

@@ -20,7 +20,7 @@ import { DynamicOptions } from './dynamic-options/dynamic-options';
             @switch (setting.type) {
               @case ('text') {
                 <mat-form-field appearance="outline" class="w-full">
-                  <mat-label>{{ setting.label }}</mat-label>
+                  <mat-label class="">{{ setting.label }}</mat-label>
                   <input
                     matInput
                     [ngModel]="fieldValues()[setting.key]"

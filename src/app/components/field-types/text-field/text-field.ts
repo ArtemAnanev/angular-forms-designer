@@ -7,7 +7,7 @@ import {IFormField} from "../../../models/field";
   selector: 'app-text-field',
   imports: [MatFormFieldModule, MatInputModule, MatLabel],
   template: `
-    <mat-form-field class="w-full">
+    <mat-form-field appearance="outline" class="w-full">
       <mat-label>{{field().label}}</mat-label>
       <input 
           matInput

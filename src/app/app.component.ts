@@ -26,7 +26,7 @@ import { FormService } from './services/form.service';
         <app-field-settings class="w-64" />
         <button 
           mat-flat-button 
-          class="!absolute -top-[50px] right-0 compact-button" 
+          class="!absolute -top-[50px] right-0 compact-button z-10" 
           (click)="formService.exportForm()"
         >
           Export Form
@@ -35,6 +35,7 @@ import { FormService } from './services/form.service';
          
       </div>
     </div>
+    <
   `,
   standalone: true,
 })
